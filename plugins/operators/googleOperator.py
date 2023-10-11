@@ -18,3 +18,9 @@ class MyFirstOperator(BaseOperator):
     def execute(self, context):
         self.log.info("Hello World!")
 
+# class GoogleLink(BaseOperatorLink):
+#     name = "Google"
+#     operators = [MyFirstOperator]
+#     def get_link(self, operator: BaseOperator, *, ti_key: TaskInstanceKey):
+#         return "https://www.google.com"
+
