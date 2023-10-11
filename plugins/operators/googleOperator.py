@@ -1,6 +1,12 @@
 from airflow.models.baseoperator import BaseOperator
+from airflow.models.taskinstancekey import TaskInstanceKey
+from airflow.models.baseoperator import BaseOperatorLink
 
-from extraOperatorLink import GoogleLink
+class GoogleLink(BaseOperatorLink):
+    name = "Google"
+
+    def get_link(self, operator: BaseOperator, *, ti_key: TaskInstanceKey):
+        return "https://www.google.com"
 
 class MyFirstOperator(BaseOperator):
 
