@@ -1,6 +1,6 @@
 from airflow.models.baseoperator import BaseOperator
 # # , BaseOperatorLink
-from airflow.plugins_manager import AirflowPlugin
+# from airflow.plugins_manager import AirflowPlugin
 # from airflow.models.taskinstancekey import TaskInstanceKey
 
 
@@ -29,6 +29,6 @@ class MyFirstOperator(BaseOperator):
 #     ]
 
 # Defining the plugin class
-class AirflowTestPlugin(AirflowPlugin):
-    name = "test_plugin"
-    operators = [MyFirstOperator]
+# class AirflowTestPlugin(AirflowPlugin):
+#     name = "test_plugin"
+#     operators = [MyFirstOperator]
