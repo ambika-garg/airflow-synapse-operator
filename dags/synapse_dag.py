@@ -8,5 +8,5 @@ with DAG(
     schedule="0 0 * * *",
     tags=["tutorial", "CI/CD"]
 ) as dag:
-    python_version = BashOperator(task_id="pythonversion", bash_command="python --version")
+    python_version = BashOperator(task_id="pythonversion", bash_command="echo HELLO")
     python_version
