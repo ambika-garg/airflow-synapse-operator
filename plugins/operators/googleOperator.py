@@ -10,7 +10,7 @@ class GoogleLink(BaseOperatorLink):
 
 class MyFirstOperator(BaseOperator):
 
-    operator_extra_links = (GoogleLink() )
+    operator_extra_links = (GoogleLink(), )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
