@@ -1,7 +1,7 @@
 import datetime
 from airflow import DAG
 # from operators.RunSynapsePipelineOperator import AzureSynapseRunPipelineOperator
-# from operators.googleOperator import MyFirstOperator
+from operators.googleOperator import MyFirstOperator
 from airflow.operators.bash import BashOperator
 
 with DAG(
@@ -20,12 +20,11 @@ with DAG(
     #     deferrable=False 
     # )
 
-    # trigger_google_operator = MyFirstOperator(
-    #     task_id="Google_operator"
-    # )
+    trigger_google_operator = MyFirstOperator(
+        task_id="Google_operator"
+    )
 
     python_version = BashOperator(task_id="pythonversion", bash_command="python --version")
 
-    # trigger_google_operator >>
-    python_version  
+    trigger_google_operator >> python_version  
     
