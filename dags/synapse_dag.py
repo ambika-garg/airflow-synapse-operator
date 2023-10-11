@@ -1,7 +1,7 @@
 import datetime
 from airflow import DAG
 # from operators.RunSynapsePipelineOperator import AzureSynapseRunPipelineOperator
-from airflow.operators.googleOperator import MyFirstOperator
+from operators.googleOperator import MyFirstOperator
 from airflow.operators.bash import BashOperator
 
 with DAG(
