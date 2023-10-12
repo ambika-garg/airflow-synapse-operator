@@ -16,7 +16,7 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
     Constructs a link to monitor a pipeline run in Azure Synapse.
     """
 
-    name = "Monitor Pipeline Run"
+    name = "Monitor"
 
     def get_link(
         self,
@@ -24,10 +24,6 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         *,
         ti_key: TaskInstanceKey
     ) -> str:
-        # run_id = XCom.get_value(key="run_id", ti_key=ti_key)
-        # conn_id = operator.azure_synapse_conn_id
-        # self.log.info("Run ID: %s", run_id)
-        # self.log.info("Conn Id: %s", conn_id)
         return "https://www.google.com"
 
 class AzureSynapseRunPipelineOperator(BaseOperator):
