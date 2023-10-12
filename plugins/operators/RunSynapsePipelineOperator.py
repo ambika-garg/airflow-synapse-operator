@@ -30,13 +30,6 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         # self.log.info("Conn Id: %s", conn_id)
         return "https://www.google.com"
 
-# class GoogleLink(BaseOperatorLink):
-#     name = "Google"
-
-#     def get_link(self, operator: BaseOperator, *, ti_key: TaskInstanceKey):
-#         return "https://www.google.com"
-    
-
 class AzureSynapseRunPipelineOperator(BaseOperator):
     """
     Executes a Synapse Pipeline.
