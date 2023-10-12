@@ -10,6 +10,8 @@ from airflow.exceptions import AirflowException
 from typing import Any, Optional, Dict
 from airflow.models.taskinstancekey import TaskInstanceKey
 
+from operators.googleOperator import GoogleLink
+
 
 class AzureSynapsePipelineRunLink(BaseOperatorLink):
     """
@@ -23,8 +25,9 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         operator: BaseOperator,
         *,
         ti_key: TaskInstanceKey
-    ) -> str:
+    ):
         return "https://www.google.com"
+
 
 class AzureSynapseRunPipelineOperator(BaseOperator):
     """
@@ -51,7 +54,7 @@ class AzureSynapseRunPipelineOperator(BaseOperator):
 
     """
 
-    operator_extra_links = (AzureSynapsePipelineRunLink(),)
+    operator_extra_links = (GoogleLink(),)
 
     def __init__(
         self,
