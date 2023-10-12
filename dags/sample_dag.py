@@ -1,11 +1,11 @@
 import datetime
 from airflow import DAG
 # from operators.RunSynapsePipelineOperator import AzureSynapseRunPipelineOperator
-from operators.googleOperator import MyFirstOperator
+# from operators.googleOperator import MyFirstOperator
 from airflow.operators.bash import BashOperator
 
 with DAG(
-    dag_id="sample",
+    dag_id="AzureSynapseRunPipelineDag",
     schedule=None,
     start_date=datetime.datetime(2021, 1, 1),
     catchup=False,
@@ -20,10 +20,11 @@ with DAG(
     #     deferrable=False 
     # )
 
-    trigger_google_operator = MyFirstOperator(
-        task_id="Google_operator"
-    )
+    # trigger_google_operator = MyFirstOperator(
+    #     task_id="Google_operator"
+    # )
 
-    airflow_info = BashOperator(task_id="airflow_info", bash_command="airflow info")
+    python_version = BashOperator(task_id="pythonversion", bash_command="python --version")
 
-    trigger_google_operator >> airflow_info
+    # trigger_synapse_pipeline >>  
+    python_version
