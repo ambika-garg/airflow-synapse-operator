@@ -19,7 +19,8 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
     name = "Monitor Pipeline Run"
 
     def get_link(self, operator: BaseOperator, *, ti_key: TaskInstanceKey):
-        # run_id = XCom.get_value(key="run_id", ti_key=ti_key)
+        run_id = XCom.get_value(key="run_id", ti_key=ti_key)
+        raise run_id
         # self.log.info("run_id in extra operator link", run_id)
         # conn_id = operator.azure_synapse_conn_id
         # conn = BaseHook.get_connection(conn_id)
@@ -35,7 +36,7 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         # print("Hello")
         # print(base_url + encoded_params)
         # return base_url + encoded_params
-        return "https://www.google.com"
+        return "https://www.google.com/"
 
 
 class AzureSynapseRunPipelineOperator(BaseOperator):
