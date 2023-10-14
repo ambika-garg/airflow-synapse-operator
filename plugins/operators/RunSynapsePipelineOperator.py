@@ -35,7 +35,7 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         # print("Hello")
         # print(base_url + encoded_params)
         # return base_url + encoded_params
-        return run_id
+        return "https://www.google.com"
 
 
 class AzureSynapseRunPipelineOperator(BaseOperator):
