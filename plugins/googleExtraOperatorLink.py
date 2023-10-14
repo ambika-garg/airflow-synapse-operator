@@ -1,5 +1,6 @@
 from airflow.plugins_manager import AirflowPlugin
-from operators.googleOperator import GoogleLink
+
+from operators.RunSynapsePipelineOperator import GoogleLink
 
 class AirflowExtraLinkPlugin(AirflowPlugin):
     name = "extra_link_plugin"

@@ -10,9 +10,6 @@ from airflow.exceptions import AirflowException
 from typing import Any, Optional, Dict
 from airflow.models.taskinstancekey import TaskInstanceKey
 
-from operators.googleOperator import GoogleLink
-
-
 class GoogleLink(BaseOperatorLink):
     name = "Google"
 
