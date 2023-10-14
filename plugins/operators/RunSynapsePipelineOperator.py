@@ -152,10 +152,17 @@ class AzureSynapseRunPipelineOperator(BaseOperator):
             self.log.info(event["message"])
 
     def on_kill(self) -> None:
+        """
+        Method to clean up subprocesses when a task instance gets killed.
+        """
+
+        self.log.info("Started with on_kill")
         if self.run_id:
             self.hook.cancel_pipeline_run(
                 run_id=self.run_id
             )
+            
+            self.log.info("Cancelled pipeline run.")
 
             # Check to ensure the pipeline run was cancelled as expected.
             if self.hook.wait_for_pipeline_run_status(
