@@ -23,7 +23,7 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         conn_id = operator.azure_synapse_conn_id
         conn = BaseHook.get_connection(conn_id)
         self.synapse_workspace_url = conn.host
-        fields = BaseHook.__get_fields_from_url(self.synapse_workspace_url)
+        fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
 
         params = {
             "workspace": f"/subscriptions/{fields['subscription_id']}/resourceGroups/{fields['resource_group']}/providers/Microsoft.Synapse/workspaces/{fields['workspace_name']}",
