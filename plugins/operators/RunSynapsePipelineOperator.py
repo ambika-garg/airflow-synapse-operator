@@ -20,11 +20,12 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
 
     def get_link(self, operator: BaseOperator, *, ti_key: TaskInstanceKey):
         run_id = XCom.get_value(key="run_id", ti_key=ti_key)
-        raise run_id
-        # self.log.info("run_id in extra operator link", run_id)
-        # conn_id = operator.azure_synapse_conn_id
-        # conn = BaseHook.get_connection(conn_id)
-        # self.synapse_workspace_url = conn.host
+        self.log.info("run_id in extra operator link", run_id)
+        conn_id = operator.azure_synapse_conn_id
+        conn = BaseHook.get_connection(conn_id)
+        self.synapse_workspace_url = conn.host
+
+        print(self.synapse_workspace_url)
         # fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
 
         # params = {
