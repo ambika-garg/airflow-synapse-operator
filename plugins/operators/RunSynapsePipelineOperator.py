@@ -20,21 +20,21 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
 
     def get_link(self, operator: BaseOperator, *, ti_key: TaskInstanceKey):
         run_id = XCom.get_value(key="run_id", ti_key=ti_key)
-        conn_id = operator.azure_synapse_conn_id
-        conn = BaseHook.get_connection(conn_id)
-        self.synapse_workspace_url = conn.host
-        fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
+        # conn_id = operator.azure_synapse_conn_id
+        # conn = BaseHook.get_connection(conn_id)
+        # self.synapse_workspace_url = conn.host
+        # fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
 
-        params = {
-            "workspace": f"/subscriptions/{fields['subscription_id']}/resourceGroups/{fields['resource_group']}/providers/Microsoft.Synapse/workspaces/{fields['workspace_name']}",
-        }
-        encoded_params = urlencode(params)
-        base_url = f"https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}?"
+        # params = {
+        #     "workspace": f"/subscriptions/{fields['subscription_id']}/resourceGroups/{fields['resource_group']}/providers/Microsoft.Synapse/workspaces/{fields['workspace_name']}",
+        # }
+        # encoded_params = urlencode(params)
+        # base_url = f"https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}?"
 
-        print("Hello")
-        print(base_url + encoded_params)
-        return base_url + encoded_params
-
+        # print("Hello")
+        # print(base_url + encoded_params)
+        # return base_url + encoded_params
+        return run_id
 
 
 class AzureSynapseRunPipelineOperator(BaseOperator):
