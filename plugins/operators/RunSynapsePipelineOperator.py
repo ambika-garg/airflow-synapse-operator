@@ -10,27 +10,15 @@ from airflow.exceptions import AirflowException
 from typing import Any, Optional, Dict
 from airflow.models.taskinstancekey import TaskInstanceKey
 
-class GoogleLink(BaseOperatorLink):
-    name = "Google"
+class AzureSynapsePipelineRunLink(BaseOperatorLink):
+    """
+    Constructs a link to monitor a pipeline run in Azure Synapse.
+    """
+    name = "Monitor Pipeline Run"
 
     def get_link(self, operator: BaseOperator, *, ti_key: TaskInstanceKey):
         return "https://www.google.com"
 
-
-# class AzureSynapsePipelineRunLink(BaseOperatorLink):
-#     """
-#     Constructs a link to monitor a pipeline run in Azure Synapse.
-#     """
-
-#     name = "Monitor"
-
-#     def get_link(
-#         self,
-#         operator: BaseOperator,
-#         *,
-#         ti_key: TaskInstanceKey
-#     ):
-#         return "https://www.google.com"
 
 
 class AzureSynapseRunPipelineOperator(BaseOperator):
@@ -58,7 +46,7 @@ class AzureSynapseRunPipelineOperator(BaseOperator):
 
     """
 
-    operator_extra_links = (GoogleLink(),)
+    operator_extra_links = (AzureSynapsePipelineRunLink(),)
 
     def __init__(
         self,
