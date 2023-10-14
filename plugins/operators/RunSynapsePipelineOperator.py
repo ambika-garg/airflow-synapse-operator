@@ -42,7 +42,7 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         #     task_id=operator.task_id,
         #     run_id=ti_key.run_id,
         # )
-        return "https://www.google.com/"
+        return "https://www.google.com/{run_id}".format(run_id=run_id)
 
 
 class AzureSynapseRunPipelineOperator(BaseOperator):
