@@ -11,6 +11,8 @@ from typing import Any, Optional, Dict
 from urllib.parse import urlencode
 from airflow.models.taskinstancekey import TaskInstanceKey
 from airflow.hooks.base import BaseHook
+import logging
+
 
 class AzureSynapsePipelineRunLink(BaseOperatorLink):
     """
@@ -20,14 +22,13 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
 
     def get_link(self, operator: BaseOperator, *, ti_key: TaskInstanceKey):
         run_id = XCom.get_value(key="run_id", ti_key=ti_key) or ""
-        self.log.info("run_id in extra operator link", run_id)
         conn_id = operator.azure_synapse_conn_id
         conn = BaseHook.get_connection(conn_id)
         self.synapse_workspace_url = conn.host
 
         # print(self.synapse_workspace_url)
 
-        raise Exception("Sorry, no numbers below zero")
+        logging.info(run_id)
         # fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
 
         # params = {
@@ -44,7 +45,7 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         #     task_id=operator.task_id,
         #     run_id=ti_key.run_id,
         # )
-        # return "https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}".format(run_id=run_id)
+        return "https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}".format(run_id=run_id)
 
 
 class AzureSynapseRunPipelineOperator(BaseOperator):
