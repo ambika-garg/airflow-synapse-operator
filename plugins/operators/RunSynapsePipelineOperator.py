@@ -22,9 +22,9 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
 
     def get_link(self, operator: BaseOperator, *, ti_key: TaskInstanceKey):
         run_id = XCom.get_value(key="run_id", ti_key=ti_key) or ""
-        conn_id = operator.azure_synapse_conn_id
-        conn = BaseHook.get_connection(conn_id)
-        self.synapse_workspace_url = conn.host
+        # conn_id = operator.azure_synapse_conn_id
+        # conn = BaseHook.get_connection(conn_id)
+        # self.synapse_workspace_url = conn.host
 
         # print(self.synapse_workspace_url)
         logging.info("This is a logger information!")
