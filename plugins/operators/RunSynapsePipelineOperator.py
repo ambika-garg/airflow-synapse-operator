@@ -25,7 +25,9 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         conn = BaseHook.get_connection(conn_id)
         self.synapse_workspace_url = conn.host
 
-        print(self.synapse_workspace_url)
+        # print(self.synapse_workspace_url)
+
+        raise Exception("Sorry, no numbers below zero")
         # fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
 
         # params = {
@@ -42,7 +44,7 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         #     task_id=operator.task_id,
         #     run_id=ti_key.run_id,
         # )
-        return "https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}".format(run_id=run_id)
+        # return "https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}".format(run_id=run_id)
 
 
 class AzureSynapseRunPipelineOperator(BaseOperator):
