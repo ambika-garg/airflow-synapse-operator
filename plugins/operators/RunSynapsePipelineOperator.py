@@ -29,6 +29,7 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         # print(self.synapse_workspace_url)
         logging.info("This is a logger information!")
         logging.info(run_id)
+        logging.info(self.synapse_workspace_url)
         fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
 
         params = {
