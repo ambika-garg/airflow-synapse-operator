@@ -79,37 +79,6 @@ class AzureSynapseHook(BaseHook):
             field_name=name,
         )
 
-    def __get_fields_from_url(self, workspace_url):
-        """
-        Extracts the workspace_name, subscription_id and resource_group from the workspace url.
-
-        :param workspace_url: The workspace url.
-        """
-        from urllib.parse import urlparse, unquote
-        import re
-
-        try:
-            pattern = r'https://web\.azuresynapse\.net\?workspace=(.*)'
-            match = re.search(pattern, workspace_url)
-
-            if not match:
-                raise ValueError("Invalid workspace URL format")
-
-            extracted_text = match.group(1)
-            parsed_url = urlparse(extracted_text)
-            path = unquote(parsed_url.path)
-            path_segments = path.split('/')
-            if len(path_segments) == 0:
-                raise
-
-            return {
-                "workspace_name": path_segments[-1],
-                "subscription_id": path_segments[2],
-                "resource_group": path_segments[4]
-            }
-        except:
-            self.log.error("No segment found in the workspace URL.")
-
     def run_pipeline(
         self,
         pipeline_name: str,

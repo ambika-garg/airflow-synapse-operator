@@ -20,21 +20,54 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
     """
     name = "Monitor Pipeline Run"
 
+    def __get_fields_from_url(self, workspace_url):
+        """
+        Extracts the workspace_name, subscription_id and resource_group from the workspace url.
+
+        :param workspace_url: The workspace url.
+        """
+        from urllib.parse import urlparse, unquote
+        import re
+
+        try:
+            pattern = r'https://web\.azuresynapse\.net\?workspace=(.*)'
+            match = re.search(pattern, workspace_url)
+
+            if not match:
+                raise ValueError("Invalid workspace URL format")
+
+            extracted_text = match.group(1)
+            parsed_url = urlparse(extracted_text)
+            path = unquote(parsed_url.path)
+            path_segments = path.split('/')
+            if len(path_segments) == 0:
+                raise
+
+            return {
+                "workspace_name": path_segments[-1],
+                "subscription_id": path_segments[2],
+                "resource_group": path_segments[4]
+            }
+        except:
+            self.log.error("No segment found in the workspace URL.")
+
     def get_link(self, operator: BaseOperator, *, ti_key: TaskInstanceKey):
         run_id = XCom.get_value(key="run_id", ti_key=ti_key) or ""
         conn_id = operator.azure_synapse_conn_id
         conn = BaseHook.get_connection(conn_id)
         self.synapse_workspace_url = conn.host
-        # fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
+        
+        logging.info(conn_id)
+        fields = self.__get_fields_from_url(self.synapse_workspace_url)
 
-        # params = {
-        #     "workspace": f"/subscriptions/{fields['subscription_id']}/resourceGroups/{fields['resource_group']}/providers/Microsoft.Synapse/workspaces/{fields['workspace_name']}",
-        # }
-        # encoded_params = urlencode(params)
+        params = {
+            "workspace": f"/subscriptions/{fields['subscription_id']}/resourceGroups/{fields['resource_group']}/providers/Microsoft.Synapse/workspaces/{fields['workspace_name']}",
+        }
+        encoded_params = urlencode(params)
         base_url = f"https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}?"
 
         # print(base_url + encoded_params)
-        return base_url 
+        return base_url + encoded_params
     # + encoded_params
         
         # return "https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}".format(run_id=run_id)
