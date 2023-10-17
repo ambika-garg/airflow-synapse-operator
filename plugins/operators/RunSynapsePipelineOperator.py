@@ -65,7 +65,7 @@ class AzureSynapseRunPipelineOperator(BaseOperator):
     """
 
     template_fields: Sequence[str] = (
-       "azure_synapse_conn_id"
+       "azure_synapse_conn_id",
         "reference_pipeline_run_id",
         "parameters",
     )
