@@ -7,7 +7,7 @@ from hooks.azureSynapseHook import (
     AzureSynapsePipelineRunStatus
 )
 from airflow.exceptions import AirflowException
-from typing import Any, Optional, Dict
+from typing import Any, Optional, Dict, Sequence
 from urllib.parse import urlencode
 from airflow.models.taskinstancekey import TaskInstanceKey
 from airflow.hooks.base import BaseHook
@@ -25,12 +25,6 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         conn_id = operator.azure_synapse_conn_id
         conn = BaseHook.get_connection(conn_id)
         self.synapse_workspace_url = conn.host
-
-        # print(self.synapse_workspace_url)
-        logging.info(conn_id)
-        logging.info("This is a logger information!")
-        logging.info(run_id)
-        logging.info(self.synapse_workspace_url)
         fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
 
         params = {
@@ -39,7 +33,6 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         encoded_params = urlencode(params)
         base_url = f"https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}?"
 
-        print("Hello")
         print(base_url + encoded_params)
         return base_url + encoded_params
         
@@ -70,6 +63,13 @@ class AzureSynapseRunPipelineOperator(BaseOperator):
     :param deferrable: Run operator in deferrable mode.
 
     """
+
+    template_fields: Sequence[str] = (
+       "azure_synapse_conn_id"
+        "reference_pipeline_run_id",
+        "parameters",
+    )
+    template_fields_renderers = {"parameters": "json"}
 
     operator_extra_links = (AzureSynapsePipelineRunLink(),)
 
