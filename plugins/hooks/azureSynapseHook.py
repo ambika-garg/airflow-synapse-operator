@@ -220,22 +220,22 @@ class AzureSynapseHook(BaseHook):
 
         self.get_conn().pipeline_run.cancel_pipeline_run(run_id)
 
-    def get_pipeline_run_link(
-        self,
-        run_id: str
-    ) -> str:
-        """
-        Returns the Pipeline run link.
-        """
-        conn = self.get_connection(self.conn_id)
-        self.synapse_workspace_url = conn.host
+    # def get_pipeline_run_link(
+    #     self,
+    #     run_id: str
+    # ) -> str:
+    #     """
+    #     Returns the Pipeline run link.
+    #     """
+    #     conn = self.get_connection(self.conn_id)
+    #     self.synapse_workspace_url = conn.host
 
-        fields = self.__get_fields_from_url(
-            self.synapse_workspace_url)
+    #     fields = self.__get_fields_from_url(
+    #         self.synapse_workspace_url)
 
-        params = {
-            "workspace": f"/subscriptions/{fields['subscription_id']}/resourceGroups/{fields['resource_group']}/providers/Microsoft.Synapse/workspaces/{fields['workspace_name']}",
-        }
-        encoded_params = urlencode(params)
-        base_url = f"https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}?"
-        return base_url + encoded_params
+    #     params = {
+    #         "workspace": f"/subscriptions/{fields['subscription_id']}/resourceGroups/{fields['resource_group']}/providers/Microsoft.Synapse/workspaces/{fields['workspace_name']}",
+    #     }
+    #     encoded_params = urlencode(params)
+    #     base_url = f"https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}?"
+    #     return base_url + encoded_params

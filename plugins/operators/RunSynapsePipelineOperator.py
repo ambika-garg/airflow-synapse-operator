@@ -160,9 +160,9 @@ class AzureSynapseRunPipelineOperator(BaseOperator):
         context["ti"].xcom_push(key="run_id", value=self.run_id)
         # self.log.info("Operator Extra link: %s", self.operator_extra_links)
 
-        self.pipeline_run_link = self.hook.get_pipeline_run_link(self.run_id)
-        context["ti"].xcom_push(key="pipeline_run_link",
-                                value=self.pipeline_run_link)
+        # self.pipeline_run_link = self.hook.get_pipeline_run_link(self.run_id)
+        # context["ti"].xcom_push(key="pipeline_run_link",
+        #                         value=self.pipeline_run_link)
 
         if self.wait_for_termination:
             self.log.info(
