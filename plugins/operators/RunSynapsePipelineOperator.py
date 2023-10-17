@@ -25,16 +25,17 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         conn_id = operator.azure_synapse_conn_id
         conn = BaseHook.get_connection(conn_id)
         self.synapse_workspace_url = conn.host
-        fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
+        # fields = AzureSynapseHook.__get_fields_from_url(self.synapse_workspace_url)
 
-        params = {
-            "workspace": f"/subscriptions/{fields['subscription_id']}/resourceGroups/{fields['resource_group']}/providers/Microsoft.Synapse/workspaces/{fields['workspace_name']}",
-        }
-        encoded_params = urlencode(params)
+        # params = {
+        #     "workspace": f"/subscriptions/{fields['subscription_id']}/resourceGroups/{fields['resource_group']}/providers/Microsoft.Synapse/workspaces/{fields['workspace_name']}",
+        # }
+        # encoded_params = urlencode(params)
         base_url = f"https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}?"
 
-        print(base_url + encoded_params)
-        return base_url + encoded_params
+        # print(base_url + encoded_params)
+        return base_url 
+    # + encoded_params
         
         # return "https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}".format(run_id=run_id)
 
