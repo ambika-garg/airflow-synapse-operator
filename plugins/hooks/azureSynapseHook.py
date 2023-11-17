@@ -1,20 +1,42 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
 from __future__ import annotations
+
 import time
 from typing import TYPE_CHECKING, Any, Union
-from azure.identity import ClientSecretCredential, DefaultAzureCredential
-from azure.synapse.artifacts.models import CreateRunResponse, PipelineRun
-from urllib.parse import urlencode
+
 from azure.core.exceptions import ServiceRequestError
-from airflow.hooks.base import BaseHook
-from airflow.providers.microsoft.azure.utils import get_field
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 from azure.synapse.artifacts import ArtifactsClient
 from airflow.exceptions import AirflowException
+from airflow.hooks.base import BaseHook
+from airflow.providers.microsoft.azure.utils import (
+    get_field,
+)
+
+if TYPE_CHECKING:
+    from azure.synapse.artifacts.models import CreateRunResponse, PipelineRun
 
 Credentials = Union[ClientSecretCredential, DefaultAzureCredential]
 
 
 class AzureSynapsePipelineRunStatus:
     """Azure Synapse pipeline operation statuses."""
+
     QUEUED = "Queued"
     IN_PROGRESS = "InProgress"
     SUCCEEDED = "Succeeded"
@@ -30,19 +52,18 @@ class AzureSynapsePipelineRunException(AirflowException):
     """An exception that indicates a pipeline run failed to complete."""
 
 
-class AzureSynapseHook(BaseHook):
+class AzureSynapsePipelineHook(BaseHook):
     """
     A hook to interact with Azure Synapse Pipeline.
 
-    :param conn_id: The :ref:`Azure Synapse connection id<howto/connection:synapse>`.
+    :param azure_synapse_conn_id: The :ref:`Azure Synapse connection id<howto/connection:synapse>`.
     :param azure_synapse_workspace_dev_endpoint: The Azure Synapse Workspace development endpoint.
-
     """
 
-    conn_type: str = "azure_synapse"
+    conn_type: str = "azure_synapse_pipeline"
     conn_name_attr: str = "azure_synapse_conn_id"
     default_conn_name: str = "azure_synapse_connection"
-    hook_name: str = "Azure Synapse"
+    hook_name: str = "Azure Synapse Pipeline"
 
     @staticmethod
     def get_connection_form_widgets() -> dict[str, Any]:
@@ -53,23 +74,25 @@ class AzureSynapseHook(BaseHook):
 
         return {
             "tenantId": StringField(lazy_gettext("Tenant ID"), widget=BS3TextFieldWidget()),
-            "subscriptionId": StringField(lazy_gettext("Subscription ID"), widget=BS3TextFieldWidget()),
         }
 
     @staticmethod
     def get_ui_field_behaviour() -> dict[str, Any]:
         """Returns custom field behaviour."""
-
         return {
             "hidden_fields": ["schema", "port", "extra"],
             "relabeling": {"login": "Client ID", "password": "Secret", "host": "Synapse Workspace URL"},
         }
 
-    def __init__(self, azure_synapse_workspace_dev_endpoint: str, azure_synapse_conn_id: str = default_conn_name):
-        super().__init__()
-        self._conn: ArtifactsClient = None
+    def __init__(
+        self,
+        azure_synapse_workspace_dev_endpoint: str,
+        azure_synapse_conn_id: str = default_conn_name
+    ):
+        self._conn = None
         self.conn_id = azure_synapse_conn_id
         self.azure_synapse_workspace_dev_endpoint = azure_synapse_workspace_dev_endpoint
+        super().__init__()
 
     def _get_field(self, extras, name):
         return get_field(
@@ -78,21 +101,6 @@ class AzureSynapseHook(BaseHook):
             extras=extras,
             field_name=name,
         )
-
-    def run_pipeline(
-        self,
-        pipeline_name: str,
-        **config: Any
-    ) -> CreateRunResponse:
-        """
-        Run a Synapse pipeline.
-
-        :param pipeline_name: The pipeline name.
-        :param config: Extra parameters for the Synapse Artifact Client.
-        :return: The pipeline run Id.
-        """
-
-        return self.get_conn().pipeline.create_pipeline_run(pipeline_name, **config)
 
     def get_conn(self) -> ArtifactsClient:
         if self._conn is not None:
@@ -116,19 +124,26 @@ class AzureSynapseHook(BaseHook):
         self._conn = self._create_client(
             credential, self.azure_synapse_workspace_dev_endpoint)
 
-        return self._conn
+        if self._conn is not None:
+            return self._conn
+        else:
+            raise ValueError("Failed to create ArtifactsClient")
 
     @staticmethod
     def _create_client(credential: Credentials, endpoint: str):
-        return ArtifactsClient(
-            endpoint=endpoint,
-            credential=credential
-        )
+        return ArtifactsClient(credential=credential, endpoint=endpoint)
 
-    def get_pipeline_run(
-        self,
-        run_id: str
-    ) -> PipelineRun:
+    def run_pipeline(self, pipeline_name: str, **config: Any) -> CreateRunResponse:
+        """
+        Run a Synapse pipeline.
+
+        :param pipeline_name: The pipeline name.
+        :param config: Extra parameters for the Synapse Artifact Client.
+        :return: The pipeline run Id.
+        """
+        return self.get_conn().pipeline.create_pipeline_run(pipeline_name, **config)
+
+    def get_pipeline_run(self, run_id: str) -> PipelineRun:
         """
         Get the pipeline run.
 
@@ -137,10 +152,7 @@ class AzureSynapseHook(BaseHook):
         """
         return self.get_conn().pipeline_run.get_pipeline_run(run_id=run_id)
 
-    def get_pipeline_run_status(
-        self,
-        run_id: str
-    ) -> str:
+    def get_pipeline_run_status(self, run_id: str) -> str:
         """
         Get a pipeline run's current status.
 
@@ -148,14 +160,11 @@ class AzureSynapseHook(BaseHook):
 
         :return: The status of the pipeline run.
         """
-        self.log.info("Getting the status of run ID %s.", run_id)
         pipeline_run_status = self.get_pipeline_run(
             run_id=run_id,
         ).status
-        self.log.info("Current status of pipeline run %s: %s",
-                      run_id, pipeline_run_status)
 
-        return pipeline_run_status
+        return str(pipeline_run_status)
 
     def refresh_conn(self) -> ArtifactsClient:
         self._conn = None
@@ -179,7 +188,6 @@ class AzureSynapseHook(BaseHook):
 
         :return: Boolean indicating if the pipeline run has reached the ``expected_status``.
         """
-
         pipeline_run_status = self.get_pipeline_run_status(run_id=run_id)
         executed_after_token_refresh = True
         start_time = time.monotonic()
@@ -208,34 +216,10 @@ class AzureSynapseHook(BaseHook):
 
         return pipeline_run_status in expected_statuses
 
-    def cancel_pipeline_run(
-        self,
-        run_id: str
-    ) -> None:
+    def cancel_run_pipeline(self, run_id: str) -> None:
         """
         Cancel the pipeline run.
 
         :param run_id: The pipeline run identifier.
         """
-
         self.get_conn().pipeline_run.cancel_pipeline_run(run_id)
-
-    # def get_pipeline_run_link(
-    #     self,
-    #     run_id: str
-    # ) -> str:
-    #     """
-    #     Returns the Pipeline run link.
-    #     """
-    #     conn = self.get_connection(self.conn_id)
-    #     self.synapse_workspace_url = conn.host
-
-    #     fields = self.__get_fields_from_url(
-    #         self.synapse_workspace_url)
-
-    #     params = {
-    #         "workspace": f"/subscriptions/{fields['subscription_id']}/resourceGroups/{fields['resource_group']}/providers/Microsoft.Synapse/workspaces/{fields['workspace_name']}",
-    #     }
-    #     encoded_params = urlencode(params)
-    #     base_url = f"https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}?"
-    #     return base_url + encoded_params
