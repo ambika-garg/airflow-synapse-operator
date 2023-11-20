@@ -2,7 +2,7 @@ from airflow.models import BaseOperator, BaseOperatorLink, XCom
 from airflow.configuration import conf
 from functools import cached_property
 from hooks.azureSynapseHook import (
-    AzureSynapseHook,
+    AzureSynapsePipelineHook,
     AzureSynapsePipelineRunException,
     AzureSynapsePipelineRunStatus
 )
@@ -56,7 +56,7 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         conn_id = operator.azure_synapse_conn_id
         conn = BaseHook.get_connection(conn_id)
         self.synapse_workspace_url = conn.host
-        
+
         logging.info(conn_id)
         fields = self.__get_fields_from_url(self.synapse_workspace_url)
 
@@ -69,7 +69,7 @@ class AzureSynapsePipelineRunLink(BaseOperatorLink):
         logging.info(base_url + encoded_params)
         return base_url + encoded_params
     # + encoded_params
-        
+
         # return "https://ms.web.azuresynapse.net/en/monitoring/pipelineruns/{run_id}".format(run_id=run_id)
 
 
@@ -139,7 +139,7 @@ class AzureSynapseRunPipelineOperator(BaseOperator):
     @cached_property
     def hook(self):
         """Create and return an AzureSynapseHook (cached)."""
-        return AzureSynapseHook(
+        return AzureSynapsePipelineHook(
             azure_synapse_conn_id=self.azure_synapse_conn_id,
             azure_synapse_workspace_dev_endpoint=self.azure_synapse_workspace_dev_endpoint
         )
@@ -202,7 +202,7 @@ class AzureSynapseRunPipelineOperator(BaseOperator):
             self.hook.cancel_pipeline_run(
                 run_id=self.run_id
             )
-            
+
             self.log.info("Cancelled pipeline run.")
 
             # Check to ensure the pipeline run was cancelled as expected.
