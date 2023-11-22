@@ -111,6 +111,10 @@ class AzureSynapsePipelineHook(BaseHook):
         tenant = self._get_field(extras, "tenantId")
 
         credential: Credentials
+
+        self.log.info("Login", conn.login)
+        self.log.info("Credential", conn.password)
+
         if conn.login is not None and conn.password is not None:
             if not tenant:
                 raise ValueError(
