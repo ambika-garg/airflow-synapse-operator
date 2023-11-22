@@ -116,6 +116,8 @@ class AzureSynapsePipelineHook(BaseHook):
         self.log.info("Credential", conn.password)
 
         if conn.login is not None and conn.password is not None:
+            self.log.info("ClientSecretCredential")
+
             if not tenant:
                 raise ValueError(
                     "A Tenant ID is required when authenticating with Client ID and Secret.")
@@ -124,7 +126,9 @@ class AzureSynapsePipelineHook(BaseHook):
                 client_id=conn.login, client_secret=conn.password, tenant_id=tenant
             )
         else:
+            self.log.info("DefaultAzureCredential")
             credential = DefaultAzureCredential()
+
         self._conn = self._create_client(
             credential, self.azure_synapse_workspace_dev_endpoint)
 
